@@ -2,16 +2,24 @@
 
 ## Table of Contents
 - [Description](#description)
+- [Installation](#Installation)
 - [Usage](#usage)
 - [Credits](#credits)
 - [Code Example](#Code-Example)
-- [Live Site](#Live-Site)
 
 ## Description
 Simple SQL Employee database with Node.js Inquirer for browsing DB information via prewritten queries
 
+## Installation
+1 - Download and install MySQL server
+2 - Clone the repo
+3 - Source the database files found in db/ (first the employees_DB, then seed it)
+4 - Change permissions in the conn.js file to your local DB's permissions
+5 - Run "npm i" to install node packages
+6 - Run "npm start" to run the program
+
 ## Usage
-- N/A
+- Navigate options from within the program and follow prompts to add, remove, update, and delete any of Departments, Roles, or Employees from the database.
 
 ## Credits
 Developed by:
@@ -21,14 +29,14 @@ Vess Stewart-
 
 ## Features
 
-- N/A
+- Create employees, roles, departments
+- Update existing employee roles, managers
+- Delete employees, roles, departments
+- View employees, roles, departments
+- View total budget for any particular department
 
 [GitHub repository](https://github.com/angel-pup/employee-tracker)
 
 ### Code-Example
-# REPLACE
-[![Employee Tracker](https://img.youtube.com/vi/07AGPGsl-Vw/0.jpg)](https://www.youtube.com/watch?v=07AGPGsl-Vw)
 
-## Live-Site
-
-- N/A
+[![Employee Tracker](https://img.youtube.com/vi/z7oHxxelxCc/0.jpg)](https://www.youtube.com/watch?v=z7oHxxelxCc)
