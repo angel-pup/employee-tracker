@@ -1,0 +1,8 @@
+node_modules
+.idea/workspace.xml
+.idea/*.iml
+*.iml
+.DS_Store
+.env
+.example
+.prettierrc
