@@ -15,6 +15,7 @@ const view_employees = async () => {
     let response = await inquire(prompts["EMPLOYEE_VIEW_MENU"]);
     let option = response.option;
     let id;
+    let exit = false;
 
     switch(option) {
         case "View All Employees":
@@ -62,16 +63,21 @@ const view_employees = async () => {
 
                 response = await connection.promise().query('SELECT * FROM `departmentEmployees` WHERE department_id = ?', id)
             }
+            break;
+        default:
+            exit = true;
     }
 
     console.clear();
-    console.log(cTable.getTable(response[0]));
+    if(!exit) console.log(cTable.getTable(response[0]));
 
 }
 
 const manage_employees = async () => {
     let response = await inquire(prompts["EMPLOYEE_MANAGE_MENU"])
     let option = response.option;
+
+    let exit = false;
     
     response = await connection.promise().query('SELECT * FROM `department`');
 
@@ -116,15 +122,19 @@ const manage_employees = async () => {
 
                 response[0].forEach((x) => roles.push(`${x.id}\t ${x.title}`));
 
-                let role_id = await inquire({
-                    type: "list",
-                    name: "id",
-                    message: `Which role will ${first} ${last} have?`,
-                    choices: roles,
-                    loop: false
-                });
-
-                role_id = role_id.id.split(' ')[0];
+                let role_id = null;
+                
+                if (roles) {
+                    role_id = await inquire({
+                        type: "list",
+                        name: "id",
+                        message: `Which role will ${first} ${last} have?`,
+                        choices: roles,
+                        loop: false
+                    });
+    
+                    role_id = role_id.id.split(' ')[0];
+                }
 
                 response = await connection.promise().query('SELECT * FROM `departmentEmployees` WHERE department_id = ?', department_id);
 
@@ -265,10 +275,13 @@ const manage_employees = async () => {
 
             }
             break;
+        default:
+            exit = true;
     }
 
     console.clear();
-    console.log(cTable.getTable(response[0]));
+
+    if(!exit) console.log(cTable.getTable(response[0]));
 }
 
 const view_roles = async () => {
@@ -279,52 +292,167 @@ const view_roles = async () => {
 
 
 const manage_roles = async () => {
-    const option = await inquire(prompts["ROLE_MANAGE_MENU"]).option
-
+    let response = await inquire(prompts["ROLE_MANAGE_MENU"])
+    let option = response.option;
     let exit = false;
 
-    while(!exit) {
-        
-        switch(option) {
-            case "Add Role":
-                // INSERT INTO role (id, title, salary, department_id) VALUES (A, B, C, D); // REQUIRES PREQUERY
-                break;
-            case "Delete Role":
-                // DELETE FROM role WHERE id = X; // REQUIRES PREQUERY
-                break;
-            default:
-                exit = true;
-        }
+    switch(option) {
+        case "Add Role":
+            {
+                response = await connection.promise().query('SELECT * FROM `department`');
 
+                let departments = [];
+
+                response[0].forEach((x) => departments.push(`${x.id}\t ${x.name}`));
+
+                option = await inquire({
+                    type: "list",
+                    name: "id",
+                    message: `Which department will this role be for?\nID:\t DEPARTMENT:`,
+                    choices: departments,
+                    loop: false
+                });
+
+                id = option.id.split(' ')[0]; // grab the id
+
+                option = await inquire({
+                    type: "number",
+                    name: "amount",
+                    message: "How much will this role pay?",
+                    default: 100000
+                });
+
+                let salary = option.amount;
+
+                option = await inquire({
+                    type: "input",
+                    name: "title",
+                    message: "What is the job title for this role?",
+                    default: "Underwater Basket Weaver"
+                });
+
+                let title = option.title;
+
+                await connection.promise().query('INSERT INTO `role` (title, salary, department_id) VALUES (?, ?, ?)', [title, salary, id]);
+
+                response = await connection.promise().query('SELECT * FROM role WHERE title = ? AND salary = ? AND department_id = ?', [title, salary, id]);
+
+            }
+
+            break;
+        case "Delete Role":
+            {
+                response = await connection.promise().query('SELECT * FROM `role`');
+
+                let roles = [];
+
+                response[0].forEach((x) => roles.push(`${x.id}\t ${x.title}`));
+
+                option = await inquire({
+                    type: "list",
+                    name: "id",
+                    message: `Which role would you like to delete?\nID:\t DEPARTMENT:`,
+                    choices: roles,
+                    loop: false
+                });
+
+                id = option.id.split(' ')[0]; // grab the id
+
+                await connection.promise().query('DELETE FROM role WHERE id = ?', id);
+
+                response = await connection.promise().query('SELECT * FROM role');
+
+            }
+            break;
+        default:
+            exit = true;
     }
+
+    console.clear();
+    if(!exit) console.log(cTable.getTable(response[0]));
 }
 
 const view_departments = async () => {
-    // SELECT * FROM department;
-    // PAUSE!!
+    let response = await connection.promise().query('SELECT * FROM `department`');
+    console.clear();
+    console.log(cTable.getTable(response[0]));
 }
 
 const manage_departments = async () => {
-    const option = await inquire(prompts["DEPARTMENT_MANAGE_MENU"]).option
+    let response = await inquire(prompts["DEPARTMENT_MANAGE_MENU"]);
+    let option = response.option;
+    let exit = false;
 
-    while(!exit) {
-        
-        switch(option) {
-            case "Add Department":
-                // INSERT INTO department (id, name) VALUES (X, Y); // REQUIRES PREQUERY
-                break;
-            case "Delete Department":
-                // DELETE FROM department WHERE id = X; // REQUIRES PREQUERY
-                break;
-            default:
-                exit = true;
-        }
+    switch(option) {
+        case "Add Department":
+            {
+                option = await inquire({
+                    type: "input",
+                    name: "name",
+                    message: `What will be the name of the department?`,
+                    default: "The Spoopy Department"
+                });
 
+                let name = option.name;
+
+                await connection.promise().query('INSERT INTO department (name) VALUES (?)', name);
+
+                response = await connection.promise().query('SELECT * FROM department');
+
+            }
+
+            break;
+        case "Delete Department":
+            {
+                response = await connection.promise().query('SELECT * FROM `department`');
+
+                let departments = [];
+
+                response[0].forEach((x) => departments.push(`${x.id}\t ${x.name}`));
+
+                option = await inquire({
+                    type: "list",
+                    name: "id",
+                    message: `Which department would you like to delete?\nID:\t DEPARTMENT:`,
+                    choices: departments,
+                    loop: false
+                });
+
+                id = option.id.split(' ')[0]; // grab the id
+
+                await connection.promise().query('DELETE FROM department WHERE id = ?', id);
+
+                response = await connection.promise().query('SELECT * FROM department');
+            }
+            break;
+        default:
+            exit = true;
     }
+
+    console.clear();
+    if(!exit) console.log(cTable.getTable(response[0]));
 }
 
 const view_department_budget = async () => {
-    // SELECT SUM(E.salary) FROM employee E JOIN role R ON R.id = E.role_id JOIN department D ON D.id = R.department_id WHERE D.id = X; // REQUIRES PREQUERY
+    let response = await connection.promise().query('SELECT * FROM `department`');
+
+    let departments = [];
+
+    response[0].forEach((x) => departments.push(`${x.id}\t ${x.name}`));
+
+    option = await inquire({
+        type: "list",
+        name: "id",
+        message: `Which department's budget would you like to see?\nID:\t DEPARTMENT:`,
+        choices: departments,
+        loop: false
+    });
+
+    id = option.id.split(' ')[0]; // grab the id
+
+    response = await connection.promise().query('SELECT SUM(salary) AS TOTAL_BUDGET FROM `departmentEmployees` WHERE department_id = ?', id);
+    console.clear();
+    console.log(cTable.getTable(response[0]));
 }
 
 const init = async () => {

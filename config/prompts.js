@@ -38,7 +38,7 @@ const prompts = {
             "Delete Employee",
             "Update Employee Role",
             "Update Employee Manager",
-            "Back",
+            "Go Back",
         ],
         loop: false
     },
@@ -62,7 +62,8 @@ const prompts = {
         message: "MANAGE DEPARTMENTS: What would you like to do?",
         choices: [
             "Add Department",
-            "Delete Department"
+            "Delete Department",
+            "Go Back"
         ],
         loop: false
     }
