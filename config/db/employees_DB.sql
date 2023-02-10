@@ -31,3 +31,19 @@ CREATE TABLE employee (
     REFERENCES employee(id)
     ON DELETE SET NULL
 );
+
+CREATE VIEW managers AS
+SELECT *
+FROM employee
+WHERE id IN 
+    (
+    SELECT manager_id
+    FROM employee
+    WHERE manager_id IS NOT NULL
+    );
+
+CREATE VIEW departmentEmployees AS
+SELECT E.id, E.first_name, E.last_name, E.role_id, E.manager_id, D.id AS department_id
+FROM employee E
+JOIN role R ON R.id = E.role_id
+JOIN department D ON D.id = R.department_id;
