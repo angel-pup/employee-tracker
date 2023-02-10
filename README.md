@@ -11,12 +11,12 @@
 Simple SQL Employee database with Node.js Inquirer for browsing DB information via prewritten queries
 
 ## Installation
-1 - Download and install MySQL server
-2 - Clone the repo
-3 - Source the database files found in db/ (first the employees_DB, then seed it)
-4 - Change permissions in the conn.js file to your local DB's permissions
-5 - Run "npm i" to install node packages
-6 - Run "npm start" to run the program
+- Download and install MySQL server
+- Clone the repo
+- Source the database files found in db/ (first the employees_DB, then seed it)
+- Change permissions in the conn.js file to your local DB's permissions
+- Run "npm i" to install node packages
+- Run "npm start" to run the program
 
 ## Usage
 - Navigate options from within the program and follow prompts to add, remove, update, and delete any of Departments, Roles, or Employees from the database.
